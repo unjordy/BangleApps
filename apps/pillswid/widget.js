@@ -1,7 +1,10 @@
 (() => {
     const width = 24;
     const icon = atob("GBiBAAAAAAAAAAf/4A//8B//+B//+AAAAA//8A//8AwAMAxwMAxQMAxwMAxQMAxSMAwMMAwMMAwSMAwAMA//8A//8Af/4AAAAAAAAA==");
-    const settings = require('Storage').readJSON('pills.json', 1) || {};
+    const settings = require('Storage').readJSON('pills.json', 1) || {
+        foodMins: 30,
+        pillHours: 23,
+    };
     const pillMins = 2;
     let foodTimeout;
     let pillTimeout;
@@ -14,6 +17,7 @@
 
         if (settings.pillTakenTime) {
             tilFood = settings.pillTakenTime + (settings.foodMins * 60000) - now;
+            // tilPill = settings.pillTakenTime + (settings.pillHours * 3600000) - now;
             tilPill = settings.pillTakenTime + (pillMins * 60000) - now;
         }
 
@@ -22,9 +26,7 @@
                 Bangle.buzz(300, 1).then(() => {
                     foodTimeout = null;
                     settings.showAlert = true;
-                    require('Storage').write('pills.json', {
-                        showAlert: true
-                    });
+                    require('Storage').write('pills.json', settings);
 
                     WIDGETS.pillTimer.draw(WIDGETS.pillTimer);
                     g.flip();
@@ -41,9 +43,7 @@
 
                 pillTimeout = null;
                 settings.showAlert = true;
-                require('Storage').write('pills.json', {
-                    showAlert: true
-                });
+                require('Storage').write('pills.json', settings);
 
                 WIDGETS.pillTimer.draw(WIDGETS.pillTimer);
             }, tilPill);
