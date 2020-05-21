@@ -5,7 +5,6 @@
         foodMins: 30,
         pillHours: 23,
     };
-    const pillMins = 2;
     let foodTimeout;
     let pillTimeout;
     let redrawInterval;
@@ -17,13 +16,12 @@
 
         if (settings.pillTakenTime) {
             tilFood = settings.pillTakenTime + (settings.foodMins * 60000) - now;
-            // tilPill = settings.pillTakenTime + (settings.pillHours * 3600000) - now;
-            tilPill = settings.pillTakenTime + (pillMins * 60000) - now;
+            tilPill = settings.pillTakenTime + (settings.pillHours * 3600000) - now;
         }
 
         if (!foodTimeout && tilFood > 0) {
             foodTimeout = setTimeout(() => {
-                Bangle.buzz(300, 1).then(() => {
+                Bangle.buzz(100, 0.75).then(() => {
                     foodTimeout = null;
                     settings.showAlert = true;
                     require('Storage').write('pills.json', settings);
@@ -62,12 +60,12 @@
             g.drawImage(icon, this.x, this.y);
         }
         else if (tilFood > 0) {
-            const til = Math.floor(tilFood / 1000);
+            const til = Math.floor(tilFood / 60000);
 
             if (!redrawInterval) {
                 redrawInterval = setInterval(() => {
                     WIDGETS.pillTimer.draw(WIDGETS.pillTimer);
-                }, 1000);
+                }, 10000);
             }
 
             g.setColor(255, 255, 0);
